@@ -1,0 +1,56 @@
+```{r}
+library(arules)
+library(dplyr)
+data_personas = read.csv('C:\\Users\\Lenovo\\Documents\\PERSONA_BDP.csv',sep = ",")
+
+
+## Se procedió a realizar una muestra del dataset dado que por espacio y RAM, RStudio daba error al utilizar apriori.
+nsample = 5000000
+
+muestra_data_personas = data_personas %>%
+  slice_sample(n = nsample) %>%
+  select(-c(PEA,POCUPA,PEI))
+
+
+### Apriori
+reglas_mpersonas = apriori(muestra_data_personas, parameter = list(support = 0.2, confidence = 0.5))
+
+### Evaluacion de reglas de asociación
+reglas_ordenadas <- sort(subset(reglas_mpersonas, confidence < 0.95  & lhs %pin% "DEPARTAMENTO" ##& rhs  lhs %pin% "PCP"
+                                ), by = "confidence", decreasing = TRUE)
+inspect(reglas_ordenadas)
+
+
+### --------- Regla de asociación 1 ---------
+r1 <- sort(subset(reglas_mpersonas, confidence < 0.95  & lhs %pin% "PCP34"), by = "confidence", decreasing = TRUE)
+inspect(r1)
+
+## Regla asociacion a extraer:[4]	{PCP34=[3,7]}	=>	{PCP7=[32,122]}	0.2323304	0.7756395	0.2995340	2.267574	1161652
+
+
+
+### --------- Regla de asociación 2 ---------
+r2 <- sort(subset(reglas_mpersonas, confidence < 0.95  & lhs %pin% "NIVGRADO"), by = "confidence", decreasing = TRUE)
+inspect(r2)
+
+## Regla asociacion a extraer: [12]	{NIVGRADO=[36,72]}	=>	{PCP7=[14,32)}	0.2575126	0.6082192	0.4233878	1.7576650	1287563
+
+
+
+### --------- Regla de asociación 3 ---------
+r3 <- sort(subset(reglas_mpersonas, confidence < 0.95  & lhs %pin% "PCP26_C"), by = "confidence", decreasing = TRUE)
+inspect(r3)
+
+## Regla asociacion a extraer:[3]	{PCP26_C=[1,2)}	=>	{ANEDUCA=[6,21]}	0.2096876	0.8500699	0.2466710	2.0077809	1048438
+
+
+
+### --------- Regla de asociación 4 --------- EXTRA
+r4 <- sort(subset(reglas_mpersonas, confidence < 0.95  & lhs %pin% "PCP7"), by = "confidence", decreasing = TRUE)
+inspect(r4)
+
+## Regla asociacion a extraer: [10]	{PCP7=[14,32)}	=>	{PCP5=[3,15]}	0.2535290	0.7326619	0.3460382	1.1741557	1267645
+
+
+```
+
