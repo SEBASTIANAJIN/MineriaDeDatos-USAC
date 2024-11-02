@@ -1,0 +1,30 @@
+library(arules)
+library(dplyr)
+data_personas = read.csv('C:\\Users\\Lenovo\\Documents\\PERSONA_BDP.csv',sep = ",")
+
+
+## Se procedió a realizar una muestra del dataset dado que por espacio y RAM, RStudio daba error al utilizar apriori.
+nsample = 5000000
+
+muestra_data_personas = data_personas %>%
+  slice_sample(n = nsample) %>%
+  select(-c(PEA,POCUPA,PEI))
+
+### Clusterización de regla Apriori No. 1
+library(ggplot2)
+library(dplyr)
+
+cluster_df = muestra_data_personas %>%
+  filter(NIVGRADO != "NA")
+
+cluster_df = cluster_df[,c("NIVGRADO","PCP7")]
+colnames(cluster_df) = c("NIVELGRADO","Edad")
+
+cluster_regla = kmeans(cluster_df, centers = 5)
+
+ggplot(cluster_df, aes(x = Edad , y = NIVELGRADO, color = as.factor(cluster_regla$cluster))) + 
+  geom_point() +
+  geom_point(data = as.data.frame(cluster_regla$centers), aes(x = Edad , y = NIVELGRADO), color = "black", size = 4, shape = 19) +
+  labs(title = "Clústerización Edad y Nivel-Grado de estudio") +
+  theme_light()
+
