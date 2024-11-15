@@ -1,0 +1,28 @@
+---
+title: "Tarea 5 - 999013345"
+author: "Sebastian Ajin"
+date: "2024-11-15"
+output: html_document
+---
+```{r}
+library("rpart")
+library("rpart.plot")
+
+df_hogar = read.csv("C:\\Users\\Lenovo\\Documents\\HOGAR_BDP.csv",  sep = ",")
+
+
+# ARBOL DE DECISION PARA LA PREGUNTA ¿Cuenta este hogar con carro?
+
+arbol_decisional <- rpart(PCH9_M ~
+                  PCH7 +
+                  PCH8 +
+                  PCH11 +
+                  PCH9_F,
+                data = df_hogar, method = "class")
+
+
+rpart.plot(arbol_decisional, type=2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn", 
+           main ="Predicción de hogar con carro", cex = 0.5)
+
+```
+
